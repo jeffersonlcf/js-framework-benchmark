@@ -5,6 +5,7 @@
     <title>Angular v1.6.2</title>
     <link href="/css/currentStyle.css" rel="stylesheet"/>
     <script src='dist/main.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 </head>
 <body ng-app="app">
 <div class="container" ng-controller="HomeController as homeController">
@@ -32,6 +33,18 @@
                     </div>
                     <div class="col-sm-6 smallpad">
                         <button type="button" class="btn btn-primary btn-block" id="swaprows" ng-click="homeController.swapRows()">Swap Rows</button>
+                    </div>
+                    <div class="col-sm-6 smallpad">
+                        <button type="button" class="btn btn-primary btn-block" id="insertdb" ng-click="homeController.insertDB()">insertDB</button>
+                    </div>
+                    <div class="col-sm-6 smallpad">
+                        <button type="button" class="btn btn-primary btn-block" id="selectdb" ng-click="homeController.selectDB()">selectDB</button>
+                    </div>
+                    <div class="col-sm-6 smallpad">
+                        <button type="button" class="btn btn-primary btn-block" id="updatedb" ng-click="homeController.updateDB()">updateDB</button>
+                    </div>
+                    <div class="col-sm-6 smallpad">
+                        <button type="button" class="btn btn-primary btn-block" id="deletedb" ng-click="homeController.deleteDB()">deleteDB</button>
                     </div>
                 </div>
             </div>
