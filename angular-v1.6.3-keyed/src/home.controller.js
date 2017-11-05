@@ -13,11 +13,13 @@ var stopMeasure = function() {
 };
 
 export class HomeController {
-    constructor($scope) {
+    constructor($scope, $http) {
         this.$scope = $scope;
+        this.$http = $http;
         this.start = 0;
         this.data = [];
         this.id = 1;
+        this.jsonData = "";
     }
 
     buildData(count = 1000) {
@@ -92,6 +94,69 @@ export class HomeController {
     	}
     	this.printDuration();
     };
+    insertDB() {
+        startMeasure("insertDB");
+        this.start = performance.now();
+        var ctrl = this; //set controller as a variable in the scope of the function.
+        this.jsonData = angular.toJson(this.data.concat(this.buildData(1000)));
+        this.$http({
+            method: 'POST',
+            data: this.jsonData,
+            url: 'http://localhost:3000/api/data'
+        }).then(function successCallback(response){
+            ctrl.printDuration(); //finish measuing the insert 
+            }, function errorCallback (response){
+                console.error('Error occurred:', response.status, response.data);
+        });
+    };
+    selectDB() {
+        startMeasure("selectDB");
+        this.start = performance.now();
+        var ctrl = this; //set controller as a variable in the scope of the function.
+        this.$http({
+            method: 'GET',
+            url: 'http://localhost:3000/api/data'
+        }).then(function successCallback(response){
+            ctrl.data = response.data;
+            ctrl.printDuration();
+            }, function errorCallback (response){
+                console.error('Error occurred:', response.status, response.data);
+        });
+    };
+    updateDB() {
+        startMeasure("updateDB");
+        this.start = performance.now();
+        var ctrl = this; //set controller as a variable in the scope of the function.
+        for (let i=0;i<this.data.length;i+=10) {
+            this.data[i].label += ' !!!';
+            this.jsonData = '[' + angular.toJson(this.data[i]) + ']';
+            this.$http({
+                method: 'PUT',
+                data: this.jsonData,
+                url: 'http://localhost:3000/api/data'
+            }).then(function successCallback(response){
+                //ctrl.printDuration();
+                }, function errorCallback (response){
+                    console.error('Error occurred:', response.status, response.data);
+            });
+        }
+        this.printDuration();
+    };
+    deleteDB() {
+        startMeasure("deleteDB");
+        this.start = performance.now();
+        var ctrl = this; //set controller as a variable in the scope of the function.
+        this.$http({
+            method: 'DELETE',
+            url: 'http://localhost:3000/api/data'
+        }).then(function successCallback(response){
+            ctrl.data = [];
+            ctrl.selected = null;
+            ctrl.printDuration();
+            }, function errorCallback (response){
+                console.error('Error occurred:', response.status, response.data);
+        });
+    };
 };
 
-HomeController.$inject = ['$scope'];
+HomeController.$inject = ['$scope','$http'];
