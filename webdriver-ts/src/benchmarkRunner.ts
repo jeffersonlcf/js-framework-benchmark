@@ -112,7 +112,7 @@ async function computeResultsCPU(driver: WebDriver): Promise<number[]> {
             let upperBoundForSoundnessCheck = (R.last(eventsDuringBenchmark).end - eventsDuringBenchmark[0].ts)/1000.0;
             let duration = (lastPaint.end - clicks[0].ts)/1000.0;
 
-            console.log("*** duraton", duration, "upper bound ", upperBoundForSoundnessCheck);            
+            console.log("*** duration", duration, "upper bound ", upperBoundForSoundnessCheck);
             if (duration<0) {
                 console.log("soundness check failed. reported duration is less 0", asString(eventsDuringBenchmark));
                 throw "soundness check failed. reported duration is less 0";                    
@@ -195,7 +195,7 @@ async function computeResultsStartup(driver: WebDriver): Promise<number> {
 
     let paints = R.filter(type_eq('paint'))(eventsAfterNavigationStart);
     if (paints.length == 0) {
-        console.log("at least one paint event is expected after the navigationStart event", eventsAfterNavigationStart); 
+        console.log("at least one paint event is expected after the navigationStart event", asString(filteredEvents)); 
         throw "at least one paint event is expected after the navigationStart event";
     }
     let lastPaint = R.last(paints);
@@ -227,23 +227,22 @@ function buildDriver() {
     logPref.setLevel(logging.Type.BROWSER, logging.Level.ALL);
 
     let options = new chrome.Options();
-    // options = options.setChromeBinaryPath("/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome");
-    // options = options.setChromeBinaryPath("/Applications/Chromium.app/Contents/MacOS/Chromium");
-    // options = options.setChromeBinaryPath("/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary");
-    if(args.headless)
+    if(args.headless) {
 	options = options.addArguments("--headless");
+	options = options.addArguments("--disable-gpu");
+    }
     options = options.addArguments("--js-flags=--expose-gc");
     options = options.addArguments("--disable-infobars");
     options = options.addArguments("--disable-background-networking");
     options = options.addArguments("--disable-cache");
     options = options.addArguments("--disable-extensions");    
     options = options.addArguments("--window-size=1200,800")
+    if (args.chromeBinary) options = options.setChromeBinaryPath(args.chromeBinary);
     options = options.setLoggingPrefs(logPref);
     options = options.setPerfLoggingPrefs(<any>{enableNetwork: false, enablePage: false, enableTimeline: false, traceCategories: "devtools.timeline, disabled-by-default-devtools.timeline,blink.user_timing"});
-    return new Builder()
-        .forBrowser('chrome')
-        .setChromeOptions(options)    
-        .build();
+
+    let service = new chrome.ServiceBuilder(args.chromeDriver).build();
+    return chrome.Driver.createSession(options, service);
 }
 
 async function forceGC(framework: FrameworkData, driver: WebDriver): Promise<any> {
@@ -445,6 +444,8 @@ let args = yargs(process.argv)
 .default('check','false')
 .default('exitOnError','false')
 .default('count', config.REPEAT_RUN)
+.string('chromeBinary')
+.string('chromeDriver')
 .boolean('headless')
 .array("framework").array("benchmark").argv;
 
