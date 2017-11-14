@@ -141,19 +141,19 @@ export class HomeController {
         startMeasure("updateDB");
         this.start = performance.now();
         var ctrl = this; //set controller as a variable in the scope of the function.
-        for (let i=0;i<this.data.length;i+=10) {
+        for (let i=0;i<this.data.length;i+=10) 
             this.data[i].label += ' !!!';
-            this.jsonData = '[' + angular.toJson(this.data[i]) + ']';
-            this.$http({
-                method: 'PUT',
-                data: this.jsonData,
-                url: ctrl.config.apiUrl + this.data[i].id
-            }).then(function successCallback(response){
-                //ctrl.printDuration();
-                }, function errorCallback (response){
-                    console.error('Error occurred:', response.status, response.data);
-            });
-        }
+            
+        this.jsonData = angular.toJson(this.data);
+        this.$http({
+            method: 'PUT',
+            data: this.jsonData,
+            url: ctrl.config.apiUrl
+        }).then(function successCallback(response){
+            //ctrl.printDuration();
+            }, function errorCallback (response){
+                console.error('Error occurred:', response.status, response.data);
+        });
         this.printDuration();
     };
     deleteDB() {
