@@ -273,21 +273,34 @@ const benchStartup: Benchmark = {
     }
 }
 
+const benchInsertDB: Benchmark = { 
+    id: "32_insert-DB",
+    label: "Insert into DB",
+    description: "Duration for generating and inserting 1k rows into database",
+    type: BenchmarkType.CPU,
+    init: async function(driver: WebDriver) { await testElementLocatedById(driver, "insertdb", SHORT_TIMEOUT); },
+    run: async function(driver: WebDriver) {
+        await clickElementById(driver,"insertdb");
+		await testElementLocatedByXpath(driver,"//tbody/tr[1000]/td[2]/a");
+    }
+}
+
 export let benchmarks : [ Benchmark ] = [
-    benchRun,
-    benchReplaceAll,
-    benchUpdate,
-    benchSelect,
-    benchSwapRows,
-    benchRemove,
-    benchRunBig,
-    benchAppendToManyRows,
-    benchClear,
-    benchReadyMemory,
-    benchRunMemory,
-    benchUpdate5Memory,
-    benchReplace5Memory,
-    benchCreateClear5Memory,
+    // benchRun,
+    // benchReplaceAll,
+    // benchUpdate,
+    // benchSelect,
+    // benchSwapRows,
+    // benchRemove,
+    // benchRunBig,
+    // benchAppendToManyRows,
+    // benchClear,
+    // benchReadyMemory,
+    // benchRunMemory,
+    // benchUpdate5Memory,
+    // benchReplace5Memory,
+    // benchCreateClear5Memory,
+    benchInsertDB,
     benchStartup
     ];
 

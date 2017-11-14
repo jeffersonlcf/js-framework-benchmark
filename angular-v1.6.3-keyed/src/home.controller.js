@@ -13,9 +13,10 @@ var stopMeasure = function() {
 };
 
 export class HomeController {
-    constructor($scope, $http) {
+    constructor($scope, $http,config) {
         this.$scope = $scope;
         this.$http = $http;
+        this.config = config;
         this.start = 0;
         this.data = [];
         this.id = 1;
@@ -38,6 +39,18 @@ export class HomeController {
     _random(max) {
         return Math.round(Math.random() * 1000) % max;
     }
+
+    cleanDB() {
+        this.$http({
+            method: 'DELETE',
+            url: ctrl.config.apiUrl
+        }).then(function successCallback(response){
+            console.log(response.status);
+            }, function errorCallback (response){
+                console.error('Error occurred:', response.status, response.data);
+        });
+    }
+    
     add() {
         startMeasure("add");
         this.start = performance.now();
@@ -102,9 +115,10 @@ export class HomeController {
         this.$http({
             method: 'POST',
             data: this.jsonData,
-            url: 'http://localhost:3000/api/data'
+            url: ctrl.config.apiUrl
         }).then(function successCallback(response){
-            ctrl.printDuration(); //finish measuing the insert 
+            ctrl.printDuration(); //finish measuing the insert
+            //ctrl.cleanDB();
             }, function errorCallback (response){
                 console.error('Error occurred:', response.status, response.data);
         });
@@ -115,7 +129,7 @@ export class HomeController {
         var ctrl = this; //set controller as a variable in the scope of the function.
         this.$http({
             method: 'GET',
-            url: 'http://localhost:3000/api/data'
+            url: ctrl.config.apiUrl
         }).then(function successCallback(response){
             ctrl.data = response.data;
             ctrl.printDuration();
@@ -133,7 +147,7 @@ export class HomeController {
             this.$http({
                 method: 'PUT',
                 data: this.jsonData,
-                url: 'http://localhost:3000/api/data'
+                url: ctrl.config.apiUrl + this.data[i].id
             }).then(function successCallback(response){
                 //ctrl.printDuration();
                 }, function errorCallback (response){
@@ -148,7 +162,7 @@ export class HomeController {
         var ctrl = this; //set controller as a variable in the scope of the function.
         this.$http({
             method: 'DELETE',
-            url: 'http://localhost:3000/api/data'
+            url: ctrl.config.apiUrl
         }).then(function successCallback(response){
             ctrl.data = [];
             ctrl.selected = null;
@@ -159,4 +173,4 @@ export class HomeController {
     };
 };
 
-HomeController.$inject = ['$scope','$http'];
+HomeController.$inject = ['$scope','$http','config'];

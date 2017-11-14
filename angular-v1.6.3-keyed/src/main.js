@@ -10,4 +10,7 @@ angular
     .run(() => {
         console.info(angular.version.full);
     })
+    .constant('config',{
+        apiUrl: 'https://js-benchmark-185712.appspot.com/api/data'    
+    })
     .controller('HomeController', HomeController);

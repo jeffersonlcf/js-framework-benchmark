@@ -9,6 +9,7 @@ import {JSONResult, config, FrameworkData, frameworks} from './common'
 import * as R from 'ramda';
 var chromedriver:any = require('chromedriver');
 var jStat:any = require('jstat').jStat;
+var ps = require('ps-node');
 
 promise.USE_PROMISE_MANAGER = false;
 
@@ -395,7 +396,26 @@ async function runStartupBenchmark(framework: FrameworkData, benchmark: Benchmar
     }                
 }
 
+function getProcesses(){
+    ps.lookup({ pid: 6216 }, function(err:any, resultList:any ) {
+        if (err) {
+            throw new Error( err );
+        }
+     
+        var process = resultList[ 0 ];
+     
+        if( process ){
+     
+            console.log( 'PID: %s, COMMAND: %s, ARGUMENTS: %s', process.pid, process.command, process.arguments );
+        }
+        else {
+            console.log( 'No such process found!' );
+        }
+    });
+}
+
 async function runBench(frameworkNames: string[], benchmarkNames: string[], dir: string) {
+    getProcesses();
     let runFrameworks = frameworks.filter(f => frameworkNames.some(name => f.name.indexOf(name)>-1));
     let runBenchmarks = benchmarks.filter(b => benchmarkNames.some(name => b.id.toLowerCase().indexOf(name)>-1));
     console.log("Frameworks that will be benchmarked", runFrameworks);
