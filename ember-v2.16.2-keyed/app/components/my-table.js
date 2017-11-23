@@ -24,6 +24,18 @@ export default Ember.Component.extend({
     swapRows: function() {
       this.get('rows').swapRows();
     },
+    insertDB: function(){
+      this.get('rows').insertDB();
+    },
+    selectDB: function(){
+      this.get('rows').selectDB();
+    },
+    updateDB: function(){
+      this.get('rows').updateDB();
+    },
+    deleteDB: function(){
+      this.get('rows').deleteDB();
+    },
     remove(identifier) {
       this.get('rows').remove(identifier);
     },

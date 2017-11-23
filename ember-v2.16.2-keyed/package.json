@@ -41,5 +41,8 @@
     "ember-load-initializers": "^1.0.0",
     "ember-resolver": "^4.5.0",
     "loader.js": "^4.6.0"
+  },
+  "dependencies": {
+    "ember-api-requests": "^0.3.1"
   }
 }

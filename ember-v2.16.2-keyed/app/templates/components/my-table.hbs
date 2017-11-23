@@ -23,19 +23,31 @@
                 <div class="col-sm-6 smallpad">
                     <button type="button" class="btn btn-primary btn-block" id="swaprows" {{action 'swapRows'}}>Swap Rows</button>
                 </div>
+                <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="insertdb" {{action 'insertDB'}}>insertDB</button>
+                </div>
+                <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="selectdb" {{action 'selectDB'}}>selectDB</button>
+                </div>
+                <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="updatedb" {{action 'updateDB'}}>updateDB</button>
+                </div>
+                <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="deletedb" {{action 'deleteDB'}}>deleteDB</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <table class="table table-hover table-striped test-data">
     <tbody>
-    {{#each rows.data key="identifier" as |item|}}
-        <tr class={{if (eq item.identifier rows.selected) 'danger' 'x'}}>
-            <td class="col-md-1">{{item.identifier}}</td>
+    {{#each rows.data key="id" as |item|}}
+        <tr class={{if (eq item.id rows.selected) 'danger' 'x'}}>
+            <td class="col-md-1">{{item.id}}</td>
             <td class="col-md-4">
-                <a {{action "select" item.identifier}}>{{item.label}}</a>
+                <a {{action "select" item.id}}>{{item.label}}</a>
             </td>
-            <td class="col-md-1"><a {{action "remove" item.identifier}}><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
+            <td class="col-md-1"><a {{action "remove" item.id}}><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
             <td class="col-md-6"></td>
         </tr>
     {{/each}}
