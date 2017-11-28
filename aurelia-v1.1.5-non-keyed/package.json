@@ -13,9 +13,11 @@
     "build-prod": "aurelia build --env prod"
   },
   "dependencies": {
+    "aurelia-api": "^3.1.1",
     "aurelia-binding": "1.5.0",
     "aurelia-bootstrapper": "2.1.1",
     "aurelia-dependency-injection": "1.3.2",
+    "aurelia-fetch-client": "^1.1.3",
     "aurelia-framework": "1.1.5",
     "aurelia-loader": "1.0.0",
     "aurelia-loader-default": "1.0.3",
@@ -30,7 +32,7 @@
     "aurelia-templating-binding": "1.4.0",
     "aurelia-templating-resources": "1.5.4",
     "requirejs": "2.3.5",
-    "text": "github:requirejs/text#2.0.15"
+    "text": "github:requirejs/text#2.0.15",
   },
   "devDependencies": {
     "aurelia-cli": "0.32.0",
@@ -63,5 +65,13 @@
     "through2": "2.0.1",
     "uglify-js": "3.0.19",
     "vinyl-fs": "2.4.3"
+  },
+  "jspm": {
+    "dependencies": {
+      "aurelia-api": "npm:aurelia-api@^3.1.1"
+    },
+    "devDependencies": {
+      "typescript": "npm:typescript@^2.0.7"
+    }
   }
 }

@@ -13,6 +13,12 @@ var stopMeasure = function() {
     }, 0);
 }
 
+function measurePromise(fn) {
+    var onPromiseDone = function () { return performance.now() - start; };
+    var start = performance.now();
+    return fn().then(onPromiseDone, onPromiseDone);
+}
+
 export class App {
     constructor() {
         this.store = new Store();
@@ -60,5 +66,33 @@ export class App {
         startMeasure("swapRows");
         this.store.swapRows();
         stopMeasure();
+    }
+
+    insertDB() {
+        measurePromise(() => this.store.insertDB())
+        .then((duration) => {
+            console.log(`insertDB took ${duration}`);
+        });
+    }
+
+    selectDB() {
+        measurePromise(() => this.store.selectDB())
+        .then((duration) => {
+            console.log(`selectDB took ${duration}`);
+        });
+    }
+
+    updateDB() {
+        measurePromise(() => this.store.updateDB())
+        .then((duration) => {
+            console.log(`updateDB took ${duration}`);
+        });
+    }
+
+    deleteDB() {
+        measurePromise(() => this.store.deleteDB())
+        .then((duration) => {
+            console.log(`deleteDB took ${duration}`);
+        });
     }
 }

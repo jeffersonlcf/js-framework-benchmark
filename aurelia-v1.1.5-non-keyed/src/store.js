@@ -1,3 +1,25 @@
+import {HttpClient, json} from 'aurelia-fetch-client';
+
+let httpClient = new HttpClient();
+
+httpClient.configure(config => {
+    config
+      .withBaseUrl('https://js-benchmark-185712.appspot.com/api/data')
+      //.withBaseUrl('http://localhost:3000/api/data')
+      
+      .withInterceptor({
+        request(request) {
+          //console.log(`Requesting ${request.method} ${request.url}`);
+          return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
+        },
+        response(response) {
+          //console.log(`Received ${response.status} ${response.url}`);
+          return response; // you can return a modified Response
+        }
+      });
+  })
+
+
 function _random(max) {
     return Math.round(Math.random()*1000)%max;
 }
@@ -7,6 +29,9 @@ export class Store {
         this.data = [];
         this.selected = undefined;
         this.id = 1;
+        //this.apiData = new Data();
+        this.jsonData = "";
+        this.tr = "";
     }
     buildData(count = 1000) {
         var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
@@ -17,6 +42,33 @@ export class Store {
             data.push({id: this.id++, label: adjectives[_random(adjectives.length)] + " " + colours[_random(colours.length)] + " " + nouns[_random(nouns.length)] });
         return data;
     }
+    sendRequest() {
+        if (this.tr == "GET"){
+            return httpClient.fetch('/', {
+                method: this.tr
+             })
+              .then(response => response.json())
+              .then(data => {
+                 this.data = data;
+              });
+        }else if (this.tr == "DELETE"){
+            return httpClient.fetch('/', {
+                method: this.tr
+             })
+              .then(response => response.json())
+              .then(this.data = []);
+        }
+        else{
+            return httpClient.fetch('/', {
+                method: this.tr,
+                body: json(this.jsonData)
+             })
+              .then(response => response.json())
+              .then(data => {
+                 this.data = data;
+              });
+        }
+     }  
     updateData(mod = 10) {
         for (let i=0;i<this.data.length;i+=10) {
             this.data[i].label += ' !!!';
@@ -72,5 +124,27 @@ export class Store {
             this.data.splice(9, 1, a);
         }
     }
-
+    insertDB() {
+        this.selected = undefined;
+        this.tr = "POST";
+        this.jsonData = this.buildData();
+        return this.sendRequest();
+    }
+    selectDB() {
+        this.selected = undefined;
+        this.tr = "GET";
+        return this.sendRequest();
+    }
+    updateDB() {
+        this.selected = undefined;
+        this.updateData();
+        this.tr = "PUT";
+        this.jsonData = this.data;
+        return this.sendRequest();
+    }
+    deleteDB() {
+        this.selected = undefined;
+        this.tr = "DELETE";
+        return this.sendRequest();
+    }
 }
