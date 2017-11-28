@@ -4,6 +4,12 @@ function _random(max) {
   return Math.round(Math.random()*1000)%max;
 }
 
+function measurePromise(fn) {
+  var onPromiseDone = function () { return performance.now() - start; };
+  var start = performance.now();
+  return fn().then(onPromiseDone, onPromiseDone);
+}
+
 var startTime;
 var lastMeasure;
 var startMeasure = function(name) {
@@ -53,7 +59,7 @@ export default Ember.Service.extend({
       method: tr,
       data: this.jsonData
     }).then(({ response }) => this.set('data',response))
-    .catch(({ response, jqXHR, payload }) => console.log(response));
+    .catch(({ response, jqXHR, payload }) => console.log(payload));
   },
   remove(id) {
     startMeasure("delete");
@@ -114,33 +120,29 @@ export default Ember.Service.extend({
 	stopMeasure();
   },
   insertDB() {
-    startMeasure("insertDB");
     this.jsonData = JSON.stringify(this.buildData(1000));
     this.method = 'POST'
     this.sendRequest(this.jsonData,this.method);
-    stopMeasure(); //wait for promisse
   },
   selectDB() {
-    startMeasure("selectDB");
     this.method = 'GET'
     this.jsonData = ''
-    this.sendRequest(this.jsonData,this.method);
-    stopMeasure();
+    measurePromise(() => this.sendRequest(this.jsonData,this.method))
+    .then((duration) => {
+        console.log(`selectDB took ${duration}`);
+    });
   },
   updateDB() {
-    startMeasure("updateDB");
     for (let i=0;i<this.data.length;i+=10) 
       this.data[i].label += ' !!!';
     this.method = 'PUT'
     this.jsonData = JSON.stringify(this.data);
     this.sendRequest(this.jsonData,this.method);
-    stopMeasure();
   },
   deleteDB() {
-    startMeasure("deleteDB");
     this.method = 'DELETE'
     this.jsonData = ''
     this.sendRequest(this.jsonData,this.method);
-    stopMeasure();
   }
+  
 });

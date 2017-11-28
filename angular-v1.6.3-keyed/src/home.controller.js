@@ -150,11 +150,10 @@ export class HomeController {
             data: this.jsonData,
             url: ctrl.config.apiUrl
         }).then(function successCallback(response){
-            //ctrl.printDuration();
+            ctrl.printDuration();
             }, function errorCallback (response){
                 console.error('Error occurred:', response.status, response.data);
         });
-        this.printDuration();
     };
     deleteDB() {
         startMeasure("deleteDB");
