@@ -29,7 +29,7 @@ export default Ember.Service.extend({
   selected: undefined,
   id: 1,
   jsonData: "",
-  method: "",
+  tr: "",
   buildData(count = 1000) {
     var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
     var colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
@@ -54,12 +54,22 @@ export default Ember.Service.extend({
     });
     return data;
   },
-  sendRequest(jsonData,tr){
-    return this.get('ajax').raw('/', {
-      method: tr,
-      data: this.jsonData
-    }).then(({ response }) => this.set('data',response))
-    .catch(({ response, jqXHR, payload }) => console.log(payload));
+  sendRequest(){
+    if (this.tr != "DELETE"){
+      this.get('ajax').raw('/', {
+        method: this.tr,
+        data: this.jsonData
+      }).then(({ response }) => {
+        this.set('data',response);
+        stopMeasure();
+      })
+      .catch(({ response, jqXHR, payload }) => console.log(payload));
+    }else{
+      this.get('ajax').raw('/', {
+        method: this.tr,
+      }).then(this.set('data', []), stopMeasure())
+      .catch(({ response, jqXHR, payload }) => console.log(payload));
+    }
   },
   remove(id) {
     startMeasure("delete");
@@ -120,29 +130,30 @@ export default Ember.Service.extend({
 	stopMeasure();
   },
   insertDB() {
+    startMeasure('insertDB');    
     this.jsonData = JSON.stringify(this.buildData(1000));
-    this.method = 'POST'
-    this.sendRequest(this.jsonData,this.method);
+    this.tr = 'POST'
+    this.sendRequest();
   },
   selectDB() {
-    this.method = 'GET'
+    startMeasure('selectDB');
+    this.tr = 'GET'
     this.jsonData = ''
-    measurePromise(() => this.sendRequest(this.jsonData,this.method))
-    .then((duration) => {
-        console.log(`selectDB took ${duration}`);
-    });
+    this.sendRequest();
   },
   updateDB() {
+    startMeasure('updateDB'); 
     for (let i=0;i<this.data.length;i+=10) 
       this.data[i].label += ' !!!';
-    this.method = 'PUT'
+    this.tr = 'PUT'
     this.jsonData = JSON.stringify(this.data);
-    this.sendRequest(this.jsonData,this.method);
+    this.sendRequest();
   },
   deleteDB() {
-    this.method = 'DELETE'
+    startMeasure('deleteDB');
+    this.tr = 'DELETE'
     this.jsonData = ''
-    this.sendRequest(this.jsonData,this.method);
+    this.sendRequest();
   }
   
 });

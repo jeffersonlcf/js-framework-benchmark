@@ -12,6 +12,12 @@ var stopMeasure = function() {
     }, 0);
 };
 
+function measurePromise(fn) {
+    var onPromiseDone = function () { return performance.now() - start; };
+    var start = performance.now();
+    return fn().then(onPromiseDone, onPromiseDone);
+}
+
 export class HomeController {
     constructor($scope, $http,config) {
         this.$scope = $scope;
@@ -21,6 +27,8 @@ export class HomeController {
         this.data = [];
         this.id = 1;
         this.jsonData = "";
+        this.tr = "";
+        this.apiUrl = config.apiUrl;
     }
 
     buildData(count = 1000) {
@@ -39,6 +47,33 @@ export class HomeController {
     _random(max) {
         return Math.round(Math.random() * 1000) % max;
     }
+
+    sendRequest(){
+        var ctrl = this; //set controller as a variable in the scope of the function.
+        if (this.tr != "DELETE"){
+            this.$http({
+                method: this.tr,
+                url: this.apiUrl,
+                data: this.jsonData
+            }).then(function successCallback(response){
+                ctrl.data = response.data;
+                ctrl.printDuration();
+                }, function errorCallback (response){
+                    console.error('Error occurred:', response.status, response.data);
+                })
+        }else{
+            this.$http({
+                method: this.tr,
+                url: this.apiUrl,
+            }).then(function successCallback(response){
+                ctrl.data = [];
+                ctrl.selected = null;
+                ctrl.printDuration();
+                }, function errorCallback (response){
+                    console.error('Error occurred:', response.status, response.data);
+                })
+        }
+    };
 
     cleanDB() {
         this.$http({
@@ -110,65 +145,30 @@ export class HomeController {
     insertDB() {
         startMeasure("insertDB");
         this.start = performance.now();
-        var ctrl = this; //set controller as a variable in the scope of the function.
+        this.tr = 'POST';
         this.jsonData = angular.toJson(this.data.concat(this.buildData(1000)));
-        this.$http({
-            method: 'POST',
-            data: this.jsonData,
-            url: ctrl.config.apiUrl
-        }).then(function successCallback(response){
-            ctrl.printDuration(); //finish measuing the insert
-            //ctrl.cleanDB();
-            }, function errorCallback (response){
-                console.error('Error occurred:', response.status, response.data);
-        });
+        this.sendRequest();
     };
     selectDB() {
         startMeasure("selectDB");
         this.start = performance.now();
-        var ctrl = this; //set controller as a variable in the scope of the function.
-        this.$http({
-            method: 'GET',
-            url: ctrl.config.apiUrl
-        }).then(function successCallback(response){
-            ctrl.data = response.data;
-            ctrl.printDuration();
-            }, function errorCallback (response){
-                console.error('Error occurred:', response.status, response.data);
-        });
+        this.tr = 'GET';
+        this.sendRequest();
     };
     updateDB() {
         startMeasure("updateDB");
         this.start = performance.now();
-        var ctrl = this; //set controller as a variable in the scope of the function.
+        this.tr = 'PUT';
         for (let i=0;i<this.data.length;i+=10) 
             this.data[i].label += ' !!!';
-            
         this.jsonData = angular.toJson(this.data);
-        this.$http({
-            method: 'PUT',
-            data: this.jsonData,
-            url: ctrl.config.apiUrl
-        }).then(function successCallback(response){
-            ctrl.printDuration();
-            }, function errorCallback (response){
-                console.error('Error occurred:', response.status, response.data);
-        });
+        this.sendRequest();
     };
     deleteDB() {
         startMeasure("deleteDB");
         this.start = performance.now();
-        var ctrl = this; //set controller as a variable in the scope of the function.
-        this.$http({
-            method: 'DELETE',
-            url: ctrl.config.apiUrl
-        }).then(function successCallback(response){
-            ctrl.data = [];
-            ctrl.selected = null;
-            ctrl.printDuration();
-            }, function errorCallback (response){
-                console.error('Error occurred:', response.status, response.data);
-        });
+        this.tr = 'DELETE';
+        this.sendRequest();
     };
 };
 

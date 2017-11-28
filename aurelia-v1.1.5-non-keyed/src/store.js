@@ -19,6 +19,19 @@ httpClient.configure(config => {
       });
   })
 
+  var startTime;
+  var lastMeasure;
+  var startMeasure = function(name) {
+      startTime = performance.now();
+      lastMeasure = name;
+  }
+  var stopMeasure = function() {
+      window.setTimeout(function() {
+          var stop = performance.now();
+          console.log(lastMeasure+" took "+(stop-startTime));
+      }, 0);
+  }
+
 
 function _random(max) {
     return Math.round(Math.random()*1000)%max;
@@ -29,7 +42,6 @@ export class Store {
         this.data = [];
         this.selected = undefined;
         this.id = 1;
-        //this.apiData = new Data();
         this.jsonData = "";
         this.tr = "";
     }
@@ -44,28 +56,29 @@ export class Store {
     }
     sendRequest() {
         if (this.tr == "GET"){
-            return httpClient.fetch('/', {
+            httpClient.fetch('/', {
                 method: this.tr
              })
               .then(response => response.json())
               .then(data => {
                  this.data = data;
+                 stopMeasure();
               });
         }else if (this.tr == "DELETE"){
-            return httpClient.fetch('/', {
+            httpClient.fetch('/', {
                 method: this.tr
              })
-              .then(response => response.json())
-              .then(this.data = []);
+              .then(this.data = [], stopMeasure());
         }
         else{
-            return httpClient.fetch('/', {
+            httpClient.fetch('/', {
                 method: this.tr,
                 body: json(this.jsonData)
              })
               .then(response => response.json())
               .then(data => {
                  this.data = data;
+                 stopMeasure();
               });
         }
      }  
@@ -125,26 +138,30 @@ export class Store {
         }
     }
     insertDB() {
+        startMeasure("insertDB");
         this.selected = undefined;
         this.tr = "POST";
         this.jsonData = this.buildData();
-        return this.sendRequest();
+        this.sendRequest();
     }
     selectDB() {
+        startMeasure("selectDB");
         this.selected = undefined;
         this.tr = "GET";
-        return this.sendRequest();
+        this.sendRequest();
     }
     updateDB() {
+        startMeasure("updateDB");
         this.selected = undefined;
         this.updateData();
         this.tr = "PUT";
         this.jsonData = this.data;
-        return this.sendRequest();
+        this.sendRequest();
     }
     deleteDB() {
+        startMeasure("deleteDB");
         this.selected = undefined;
         this.tr = "DELETE";
-        return this.sendRequest();
+        this.sendRequest();
     }
 }

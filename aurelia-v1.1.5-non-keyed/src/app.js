@@ -24,6 +24,10 @@ export class App {
         this.store = new Store();
     }
 
+    printDuration() {
+        stopMeasure();
+    }
+
     run() {
         startMeasure("run");
         this.store.run();
@@ -69,30 +73,18 @@ export class App {
     }
 
     insertDB() {
-        measurePromise(() => this.store.insertDB())
-        .then((duration) => {
-            console.log(`insertDB took ${duration}`);
-        });
+        this.store.insertDB();
     }
 
     selectDB() {
-        measurePromise(() => this.store.selectDB())
-        .then((duration) => {
-            console.log(`selectDB took ${duration}`);
-        });
+        this.store.selectDB();
     }
 
     updateDB() {
-        measurePromise(() => this.store.updateDB())
-        .then((duration) => {
-            console.log(`updateDB took ${duration}`);
-        });
+        this.store.updateDB();
     }
 
     deleteDB() {
-        measurePromise(() => this.store.deleteDB())
-        .then((duration) => {
-            console.log(`deleteDB took ${duration}`);
-        });
+        this.store.deleteDB();
     }
 }
