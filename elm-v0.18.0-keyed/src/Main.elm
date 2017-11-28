@@ -265,23 +265,23 @@ update msg model =
             ( { model | rows = [] }, Cmd.none )
 
         Swap ->
-            if List.length model.rows >= 10 then
+            if List.length model.rows > 998 then
                 let
                     arr =
                         model.rows
                             |> Array.fromList
 
                     from =
-                        get 4 arr
+                        get 1 arr
 
                     to =
-                        get 9 arr
+                        get 998 arr
                 in
                     ( { model
                         | rows =
                             arr
-                                |> Array.set 4 to
-                                |> Array.set 9 from
+                                |> Array.set 1 to
+                                |> Array.set 998 from
                                 |> Array.toList
                       }
                     , Cmd.none

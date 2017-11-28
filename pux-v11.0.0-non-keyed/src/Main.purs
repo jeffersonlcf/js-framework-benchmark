@@ -95,7 +95,7 @@ foldp (MergeRows Append arr i) st =
 
 -- Clear all rows from the screen and reset the last id to 1
 foldp (Clear ev) st =
-  { state: st { rows = [], lastId = 1 }, effects: [ liftEff (preventDefault ev) *> pure Nothing] }
+  { state: st { rows = [], lastId = st.lastId }, effects: [ liftEff (preventDefault ev) *> pure Nothing] }
 
 -- Create the specified number of rows and prevent the browser
 -- from receiving the click event. Depending on the provided
@@ -295,7 +295,7 @@ buttons =
   , { bid: "add",      str: "Append 1,000 Rows",     ev: Create Append  1000  }
   , { bid: "update",   str: "Update Every 10th Row", ev: UpdateEvery 10 }
   , { bid: "clear",    str: "Clear",                 ev: Clear }
-  , { bid: "swaprows", str: "Swap Rows",             ev: Swap 4 9 } ]
+  , { bid: "swaprows", str: "Swap Rows",             ev: Swap 1 998 } ]
 
 
 

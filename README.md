@@ -12,7 +12,7 @@ The following operations are benchmarked for each framework:
 
 * create rows: Duration for creating 1000 rows after the page loaded.
 * replace all rows: Duration for updating all 1000 rows of the table (with 5 warmup iterations).
-* partial update: Time to update the text of every 10th row (with 5 warmup iterations).
+* partial update: Time to update the text of every 10th row for a table with 10000 rows (with 5 warmup iterations).
 * select row: Duration to highlight a row in response to a click on the row. (with 5 warmup iterations).
 * swap rows: Time to swap 2 rows on a 1K table. (with 5 warmup iterations).
 * remove row: Duration to remove a row. (with 5 warmup iterations).
@@ -25,7 +25,7 @@ The following operations are benchmarked for each framework:
 * startup time: Duration for loading and parsing the javascript code and rendering the page.
 
 For all benchmarks the duration is measured including rendering time. You can read some details on this [article](http://www.stefankrause.net/wp/?p=218).
-The results of this benchmark is outlined on my blog ([round 1](http://www.stefankrause.net/wp/?p=191), [round 2](http://www.stefankrause.net/wp/?p=283), [round 3](http://www.stefankrause.net/wp/?p=301), [round 4](http://www.stefankrause.net/wp/?p=316) [round 5](http://www.stefankrause.net/wp/?p=392) and [round 6](http://www.stefankrause.net/wp/?p=431)).
+The results of this benchmark is outlined on my blog ([round 1](http://www.stefankrause.net/wp/?p=191), [round 2](http://www.stefankrause.net/wp/?p=283), [round 3](http://www.stefankrause.net/wp/?p=301), [round 4](http://www.stefankrause.net/wp/?p=316), [round 5](http://www.stefankrause.net/wp/?p=392), [round 6](http://www.stefankrause.net/wp/?p=431) and [round 7](http://www.stefankrause.net/wp/?p=454)).
 
 ## Snapshot of the results
 

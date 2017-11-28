@@ -58,6 +58,7 @@
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"
           },
+          "aurelia-fetch-client",
           "text"
         ]
       }

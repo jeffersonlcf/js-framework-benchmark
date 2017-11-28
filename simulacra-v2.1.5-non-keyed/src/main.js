@@ -66,11 +66,11 @@ var methods = {
     bench('swapRows', function () {
       var a, b
 
-    	if (state.rows.length > 10) {
-        a = Object.assign({}, state.rows[4])
-  		  b = Object.assign({}, state.rows[9])
-        Object.assign(state.rows[4], b)
-        Object.assign(state.rows[9], a)
+    	if (state.rows.length > 998) {
+        a = Object.assign({}, state.rows[1])
+  		  b = Object.assign({}, state.rows[998])
+        Object.assign(state.rows[1], b)
+        Object.assign(state.rows[998], a)
     	}
     })
   },

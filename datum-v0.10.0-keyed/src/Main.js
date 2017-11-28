@@ -87,10 +87,10 @@ var HomeViewModel = function () {
 
     this.swapRows = new Datum.Click(function () {
         startMeasure("swapRows");
-        if (this.data.length > 10) {
-            var a = this.data[4];
-            var b = this.data.splice(9, 1, a)[0];
-            this.data.splice(4, 1, b);
+        if (this.data.length > 998) {
+            var a = this.data[1];
+            var b = this.data.splice(998, 1, a)[0];
+            this.data.splice(1, 1, b);
         }
         stopMeasure();
     });

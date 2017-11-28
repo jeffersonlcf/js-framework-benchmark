@@ -96,7 +96,7 @@ export class AppComponent implements AfterViewChecked {
     }
 
     itemByIndex(index: number, item: Data) {
-        return index; 
+        return index;
     }
 
     select(item: Data, event: Event) {
@@ -144,10 +144,10 @@ export class AppComponent implements AfterViewChecked {
     }
     swapRows() {
         startMeasure("swapRows");
-        if (this.data.length > 10) {
-            var a = this.data[4];
-            this.data[4] = this.data[9];
-            this.data[9] = a;
+        if (this.data.length > 998) {
+            var a = this.data[1];
+            this.data[1] = this.data[998];
+            this.data[998] = a;
         }
     }
 
