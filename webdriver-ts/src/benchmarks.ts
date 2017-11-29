@@ -279,10 +279,64 @@ const benchInsertDB: Benchmark = {
     label: "Insert into DB",
     description: "Duration for generating and inserting 1k rows into database",
     type: BenchmarkType.CPU,
-    init: async function(driver: WebDriver) { await testElementLocatedById(driver, "insertdb", SHORT_TIMEOUT); },
+    init: async function(driver: WebDriver) { 
+        await testElementLocatedById(driver, "insertdb", SHORT_TIMEOUT); 
+        await clickElementById(driver,'deletedb');
+    },
     run: async function(driver: WebDriver) {
         await clickElementById(driver,"insertdb");
 		await testElementLocatedByXpath(driver,"//tbody/tr[1000]/td[2]/a");
+    }
+}
+
+const benchSelectDB: Benchmark = { 
+    id: "33_select-DB",
+    label: "Select from DB",
+    description: "Duration for retrieving 1k rows from the database",
+    type: BenchmarkType.CPU,
+    init: async function(driver: WebDriver) { 
+        await testElementLocatedById(driver, "selectdb", SHORT_TIMEOUT);
+        await clickElementById(driver,'deletedb');
+        await clickElementById(driver,'insertdb');
+        await clickElementById(driver,'clear');
+    },
+    run: async function(driver: WebDriver) {
+        await clickElementById(driver,"selectdb");
+		await testElementLocatedByXpath(driver,"//tbody/tr[1000]/td[2]/a");
+    }
+}
+
+const benchUpdateDB: Benchmark = { 
+    id: "34_update-DB",
+    label: "Update DB",
+    description: "Duration for updating 1k rows in the database",
+    type: BenchmarkType.CPU,
+    init: async function(driver: WebDriver) { 
+        await testElementLocatedById(driver, "updatedb", SHORT_TIMEOUT);
+        await clickElementById(driver,'deletedb');
+        await clickElementById(driver,'insertdb');
+        await testElementLocatedByXpath(driver,"//tbody/tr[1000]/td[2]/a");
+    },
+    run: async function(driver: WebDriver) {
+        await clickElementById(driver,"updatedb");
+		await testTextContains(driver,'//tbody/tr[1]/td[2]/a', ' !!!');
+    }
+}
+
+const benchDeleteDB: Benchmark = { 
+    id: "35_delete-DB",
+    label: "Delete from DB",
+    description: "Duration for deleting 1k rows in the database",
+    type: BenchmarkType.CPU,
+    init: async function(driver: WebDriver) { 
+        await testElementLocatedById(driver, "deletedb", SHORT_TIMEOUT);
+        await clickElementById(driver,"deletedb");
+        await clickElementById(driver,'insertdb');
+        await testElementLocatedByXpath(driver,"//tbody/tr[1000]/td[2]/a");
+    },
+    run: async function(driver: WebDriver) {
+        await clickElementById(driver,"deletedb");
+		await testElementNotLocatedByXPath(driver, "//tbody/tr[1]");
     }
 }
 
@@ -302,7 +356,10 @@ export let benchmarks : [ Benchmark ] = [
     // benchReplace5Memory,
     // benchCreateClear5Memory,
     benchInsertDB,
-    benchStartup
+    benchSelectDB,
+    benchUpdateDB,
+    benchDeleteDB
+    //benchStartup
     ];
 
 export function fileName(framework :FrameworkData, benchmark: Benchmark) {

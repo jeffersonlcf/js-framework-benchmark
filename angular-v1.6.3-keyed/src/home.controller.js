@@ -146,7 +146,7 @@ export class HomeController {
         startMeasure("insertDB");
         this.start = performance.now();
         this.tr = 'POST';
-        this.jsonData = angular.toJson(this.data.concat(this.buildData(1000)));
+        this.jsonData = angular.toJson(this.buildData());
         this.sendRequest();
     };
     selectDB() {
