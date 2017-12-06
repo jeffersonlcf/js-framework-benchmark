@@ -51,6 +51,7 @@ interface TestData {
 	mean:string,
 	deviation: string,
 	factor: string,
+	processes: string,
 	styleClass: string	
 }
 
@@ -134,6 +135,7 @@ let generateBenchData = (benchmarks: Array<Benchmark>, frameworkPredicate: Frame
 						mean: value.mean.toFixed(2),
 						deviation: value.standardDeviation.toFixed(2),
 						factor: factor.toFixed(2),
+						processes: value.processes.toFixed(0),
 						styleClass: color(factor)
 					});
 				} catch (err) {

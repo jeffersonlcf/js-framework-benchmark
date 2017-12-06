@@ -151,6 +151,7 @@ export class HomeController {
     };
     selectDB() {
         startMeasure("selectDB");
+        
         this.start = performance.now();
         this.tr = 'GET';
         this.sendRequest();

@@ -55,6 +55,9 @@
 	.deviation:before {
 		content: '± ';
 	}
+	.processes {
+		font-size: 8px;
+	}
 	.factor {
 		font-size: 8px;
 	}
@@ -84,7 +87,7 @@ Official results are published on my <a href="http://www.stefankrause.net/">blog
 			</th>
 			{{~bench.tests :test}}
 				{{?test}}
-					<td style="background-color:{{=test.styleClass}}"><span class="mean">{{=test.mean}}</span><span class="deviation">{{=test.deviation}}</span><br><span class="factor">({{=test.factor}})</span></td>
+					<td style="background-color:{{=test.styleClass}}"><span class="mean">{{=test.mean}}</span><span class="deviation">{{=test.deviation}}</span><br><span class="processes">{{=test.processes}}</span><br><span class="factor">({{=test.factor}})</span></td>
 				{{??}}
 					<td></td>
 				{{?}}

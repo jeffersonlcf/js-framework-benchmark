@@ -7,9 +7,10 @@ import * as fs from 'fs';
 import * as yargs from 'yargs'; 
 import {JSONResult, config, FrameworkData, frameworks} from './common'
 import * as R from 'ramda';
+import { CpuInfo } from 'os';
 var chromedriver:any = require('chromedriver');
 var jStat:any = require('jstat').jStat;
-var ps = require('ps-node');
+const si = require('systeminformation');
 
 promise.USE_PROMISE_MANAGER = false;
 
@@ -20,6 +21,26 @@ interface Timingresult {
     end?: number;
     mem?: number;
     evt?: any;
+}
+
+interface cpuInfo {
+    all: number;
+    running: number;
+    blocked: number;
+    sleeping: number;
+    unknown: number;
+}
+
+async function cpuProcesses(){
+    let cpuStatus: cpuInfo[] = [];
+    try {
+        const data = await si.processes();
+        //return data.all;
+        cpuStatus.push({all:data.all, running:data.running, blocked: data.blocked, sleeping:data.blocked, unknown:data.unknown});
+    }catch(e) {
+        console.log(e)
+    }
+    return cpuStatus;
 }
 
 function extractRelevantEvents(entries: logging.Entry[]) {
@@ -311,7 +332,7 @@ interface Result {
     benchmark: Benchmark    
 }
 
-function writeResult(res: Result, dir: string) {
+function writeResult(res: Result, processes: cpuInfo, dir: string) {
     let benchmark = res.benchmark;
         let framework = res.framework.name;
         let data = res.results;
@@ -323,6 +344,7 @@ function writeResult(res: Result, dir: string) {
             "framework": framework,
             "benchmark": benchmark.id,
             "type": benchmark.type === BenchmarkType.CPU ? "cpu" : "memory",
+            "processes": processes.all,
             "min": s.min(),
             "max": s.max(),
             "mean": s.mean(),
@@ -361,8 +383,9 @@ async function runMemOrCPUBenchmark(framework: FrameworkData, benchmark: Benchma
                 throw e;
             }
         }
+        let cpuStatus = await cpuProcesses();
         let results = benchmark.type === BenchmarkType.CPU ? await computeResultsCPU(driver) : await computeResultsMEM(driver);
-        await writeResult({framework: framework, results: results, benchmark: benchmark}, dir);
+        await writeResult({framework: framework, results: results, benchmark: benchmark}, cpuStatus[0], dir);
         console.log("QUIT"); 
         await driver.quit();
     } catch (e) {
@@ -397,7 +420,8 @@ async function runStartupBenchmark(framework: FrameworkData, benchmark: Benchmar
                 await driver.quit();
             }
         }
-        await writeResult({framework: framework, results: results, benchmark: benchmark}, dir);
+        let cpuStatus = await cpuProcesses();
+        await writeResult({framework: framework, results: results, benchmark: benchmark},cpuStatus[0], dir);
     } catch (e) {
         console.log("ERROR:", e); 
         console.log("QUIT"); 
@@ -405,26 +429,7 @@ async function runStartupBenchmark(framework: FrameworkData, benchmark: Benchmar
     }                
 }
 
-function getProcesses(){
-    ps.lookup({ pid: 6216 }, function(err:any, resultList:any ) {
-        if (err) {
-            throw new Error( err );
-        }
-     
-        var process = resultList[ 0 ];
-     
-        if( process ){
-     
-            console.log( 'PID: %s, COMMAND: %s, ARGUMENTS: %s', process.pid, process.command, process.arguments );
-        }
-        else {
-            console.log( 'No such process found!' );
-        }
-    });
-}
-
 async function runBench(frameworkNames: string[], benchmarkNames: string[], dir: string) {
-    getProcesses();
     let runFrameworks = frameworks.filter(f => frameworkNames.some(name => f.name.indexOf(name)>-1));
     let runBenchmarks = benchmarks.filter(b => benchmarkNames.some(name => b.id.toLowerCase().indexOf(name)>-1));
     console.log("Frameworks that will be benchmarked", runFrameworks);

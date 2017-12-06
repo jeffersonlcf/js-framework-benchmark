@@ -358,8 +358,8 @@ export let benchmarks : [ Benchmark ] = [
     benchInsertDB,
     benchSelectDB,
     benchUpdateDB,
-    benchDeleteDB
-    //benchStartup
+    benchDeleteDB,
+    benchStartup
     ];
 
 export function fileName(framework :FrameworkData, benchmark: Benchmark) {

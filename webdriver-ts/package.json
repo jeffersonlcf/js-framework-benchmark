@@ -31,9 +31,11 @@
     "dot": "1.1.2",
     "jstat": "1.7.1",
     "lodash": "4.17.4",
+    "os-utils": "0.0.14",
     "ps-node": "^0.1.6",
     "ramda": "^0.25.0",
     "selenium-webdriver": "3.6.0",
+    "systeminformation": "^3.33.8",
     "yargs": "10.0.3"
   }
 }
